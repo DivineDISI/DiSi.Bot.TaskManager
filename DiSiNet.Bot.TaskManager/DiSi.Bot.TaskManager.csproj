@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DiSi.Bot.TaskManager.DB\DiSi.Bot.TaskManager.DB.csproj" />
+    <ProjectReference Include="..\DiSi.Bot.TaskManager.Telegram\DiSi.Bot.TaskManager.Telegram.csproj" />
   </ItemGroup>
 
 </Project>

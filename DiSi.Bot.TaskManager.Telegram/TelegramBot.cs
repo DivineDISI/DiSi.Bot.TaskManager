@@ -1,4 +1,5 @@
-﻿using Telegram.Bot;
+﻿using DiSi.Bot.TaskManager.UI.Interfaces;
+using Telegram.Bot;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -29,22 +30,23 @@ public class TelegramBot
             pollingErrorHandler: HandleErrorAsync,
             cancellationToken: token);
     }
+
+    public async Task<Message> SendCustomMessage(ICustomMessage message, long chatId, CancellationToken token = default)
+        => await message.GetMessage().SendTextMessage(_client, chatId, token);
     
     private async Task HandleErrorAsync(ITelegramBotClient client, Exception exception, CancellationToken token)
         => await HandleError?.Invoke(client, exception, token);
     
     private async Task HandleUpdateAsync(ITelegramBotClient client, Update update, CancellationToken token)
     {
-        if (update.InlineQuery != null) 
+        if (update.InlineQuery != null)
             await HandleInlineQuery?.Invoke(client, update.InlineQuery, token);
-        else if (update.Message != null) 
+        if (update.Message != null)
             await HandleMessage?.Invoke(client, update.Message, token);
-        else if (update.CallbackQuery != null) 
+        if (update.CallbackQuery != null)
             await HandleCallbackQuery?.Invoke(client, update.CallbackQuery, token);
-        else 
-            await UnhandledUpdate?.Invoke(client, update, token);
     }
 
     public TelegramMessageBuilder CreateMessage()
-        => new TelegramMessageBuilder(_client);
+        => new TelegramMessageBuilder();
 }

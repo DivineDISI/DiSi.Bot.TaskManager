@@ -7,33 +7,17 @@ namespace DiSi.Bot.TaskManager.Telegram;
 
 public class TelegramMessageBuilder
 {
-    private ITelegramBotClient _client;
-    
-    private string _text = "";
-    private IReplyMarkup? _markup = null;
-    private ChatId? _chatId = null;
+    private string _text = string.Empty;
+    private InlineKeyboardMarkup? _markup = null;
     private int? _replyToMessageId = null;
-    
-    internal TelegramMessageBuilder(ITelegramBotClient client)
-    {
-        _client = client;
-    }
+    private ParseMode _parseMode = ParseMode.MarkdownV2;
 
-    public TelegramMessageBuilder SetChatID(ChatId chatId)
-    {
-        _chatId = chatId;
-        return this;
-    }
+    public static TelegramMessageBuilder Create()
+        => new();
     
-    public TelegramMessageBuilder AddText(string text)
+    public TelegramMessageBuilder UseParseMode(ParseMode mode)
     {
-        _text += text;
-        return this;
-    }
-
-    public TelegramMessageBuilder SetReplyMarkup(IReplyMarkup markup)
-    {
-        _markup = markup;
+        _parseMode = mode;
         return this;
     }
     
@@ -43,14 +27,43 @@ public class TelegramMessageBuilder
         return this;
     }
     
-    public async Task<Message> SendTextMessage(CancellationToken cancellationToken)
+    public TelegramMessageBuilder AddText(string text)
     {
-        return await _client.SendTextMessageAsync(
-            chatId: _chatId,
+        _text += text;
+        Console.WriteLine(_text);
+        return this;
+    }
+    public TelegramMessageBuilder SetInlineMarkup(InlineKeyboardMarkup markup)
+    {
+        _markup = markup;
+        return this;
+    }
+
+    public InlineMarkupBuilder CreateInlineMarkup()
+        => new(this);
+    
+    public async Task<Message> EditMessageTextAsync(ITelegramBotClient client, ChatId chatId, int messageId, CancellationToken cancellationToken = default)
+        => await client.EditMessageTextAsync(
+            chatId: chatId,
+            messageId: messageId,
             text: _text,
             parseMode: ParseMode.MarkdownV2,
-            replyToMessageId: _replyToMessageId,
+            cancellationToken: cancellationToken);
+    
+    public async Task<Message> EditMessageInlineMarkupAsync(ITelegramBotClient client, ChatId chatId, int messageId, CancellationToken cancellationToken = default)
+        => await client.EditMessageReplyMarkupAsync(
+            chatId: chatId,
+            messageId: messageId,
             replyMarkup: _markup,
             cancellationToken: cancellationToken);
-    }
+    
+    public async Task<Message> SendTextMessage(ITelegramBotClient client, long chatId, CancellationToken cancellationToken = default)
+        => await client.SendTextMessageAsync(
+            chatId: chatId,
+            text: _text,
+            parseMode: ParseMode.Markdown,
+            replyMarkup: _markup,
+            cancellationToken: cancellationToken);
+    
+    
 }
