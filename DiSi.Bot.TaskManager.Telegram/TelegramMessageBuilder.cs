@@ -10,7 +10,7 @@ public class TelegramMessageBuilder
     private string _text = string.Empty;
     private InlineKeyboardMarkup? _markup = null;
     private int? _replyToMessageId = null;
-    private ParseMode _parseMode = ParseMode.MarkdownV2;
+    private ParseMode _parseMode = ParseMode.Markdown;
 
     public static TelegramMessageBuilder Create()
         => new();
@@ -30,7 +30,6 @@ public class TelegramMessageBuilder
     public TelegramMessageBuilder AddText(string text)
     {
         _text += text;
-        Console.WriteLine(_text);
         return this;
     }
     public TelegramMessageBuilder SetInlineMarkup(InlineKeyboardMarkup markup)
@@ -47,7 +46,7 @@ public class TelegramMessageBuilder
             chatId: chatId,
             messageId: messageId,
             text: _text,
-            parseMode: ParseMode.MarkdownV2,
+            parseMode: _parseMode,
             cancellationToken: cancellationToken);
     
     public async Task<Message> EditMessageInlineMarkupAsync(ITelegramBotClient client, ChatId chatId, int messageId, CancellationToken cancellationToken = default)
@@ -56,14 +55,17 @@ public class TelegramMessageBuilder
             messageId: messageId,
             replyMarkup: _markup,
             cancellationToken: cancellationToken);
-    
-    public async Task<Message> SendTextMessage(ITelegramBotClient client, long chatId, CancellationToken cancellationToken = default)
-        => await client.SendTextMessageAsync(
+
+    public async Task<Message> SendTextMessage(ITelegramBotClient client, long chatId,
+        CancellationToken cancellationToken = default)
+    {
+        return await client.SendTextMessageAsync(
             chatId: chatId,
             text: _text,
-            parseMode: ParseMode.Markdown,
+            parseMode: _parseMode,
             replyMarkup: _markup,
             cancellationToken: cancellationToken);
-    
-    
+    }
+
+
 }

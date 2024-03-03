@@ -19,7 +19,11 @@ public class StartMessage : ICustomMessage
             .GetText();
         
         return TelegramMessageBuilder.Create()
-            .UseParseMode(ParseMode.MarkdownV2)
-            .AddText(text);;
+            .UseParseMode(ParseMode.Markdown)
+            .AddText(text)
+            .CreateInlineMarkup()
+                .AddRow("1", "2", "3", "4")
+                .AddRow("4", "5", "6")
+                .Use();
     }
 }

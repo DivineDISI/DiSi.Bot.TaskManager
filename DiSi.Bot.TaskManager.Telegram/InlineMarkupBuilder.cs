@@ -16,7 +16,7 @@ public class InlineMarkupBuilder
 
     public InlineMarkupBuilder AddRow(params string[] contents)
     {
-        _buttonTable.Add(contents.Select(x=>new InlineKeyboardButton(x)));
+        _buttonTable.Add(contents.Select(x=>InlineKeyboardButton.WithCallbackData(x, x)));
         return this;
     }
 

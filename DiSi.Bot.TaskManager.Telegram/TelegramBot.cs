@@ -11,7 +11,6 @@ public class TelegramBot
     public event Func<ITelegramBotClient, InlineQuery, CancellationToken, Task> HandleInlineQuery;
     public event Func<ITelegramBotClient, Message, CancellationToken, Task> HandleMessage;
     public event Func<ITelegramBotClient, CallbackQuery, CancellationToken, Task> HandleCallbackQuery;
-    public event Func<ITelegramBotClient, Update, CancellationToken, Task> UnhandledUpdate;
     public event Func<ITelegramBotClient, Exception, CancellationToken, Task> HandleError;
     
     private ITelegramBotClient _client;
@@ -31,6 +30,9 @@ public class TelegramBot
             cancellationToken: token);
     }
 
+    public TelegramMessageBuilder CreateMessage()
+        => new TelegramMessageBuilder();
+    
     public async Task<Message> SendCustomMessage(ICustomMessage message, long chatId, CancellationToken token = default)
         => await message.GetMessage().SendTextMessage(_client, chatId, token);
     
@@ -46,7 +48,4 @@ public class TelegramBot
         if (update.CallbackQuery != null)
             await HandleCallbackQuery?.Invoke(client, update.CallbackQuery, token);
     }
-
-    public TelegramMessageBuilder CreateMessage()
-        => new TelegramMessageBuilder();
 }
