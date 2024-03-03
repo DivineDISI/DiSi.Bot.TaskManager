@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 namespace DiSi.Bot.TaskManager;
 public class BotDbContext : BotDbContextBase
 {
-
+    
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         var dir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DiSi", "TaskManagerBot");

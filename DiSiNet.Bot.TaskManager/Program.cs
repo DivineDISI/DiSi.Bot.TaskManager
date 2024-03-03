@@ -1,1 +1,1 @@
-﻿//RIDER123412341234124
+﻿Console.WriteLine();
