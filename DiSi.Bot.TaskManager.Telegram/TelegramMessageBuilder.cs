@@ -10,11 +10,11 @@ public class TelegramMessageBuilder
     private ITelegramBotClient _client;
     
     private string _text = "";
-    private IReplyMarkup? _markup;
+    private IReplyMarkup? _markup = null;
     private ChatId? _chatId = null;
     private int? _replyToMessageId = null;
     
-    internal TelegramMessageBuilder(TelegramBotClient client)
+    internal TelegramMessageBuilder(ITelegramBotClient client)
     {
         _client = client;
     }
@@ -30,34 +30,27 @@ public class TelegramMessageBuilder
         _text += text;
         return this;
     }
-    
-    public TelegramMessageBuilder AddButton(string content, int row, int column)
-    {
-        return this;
-    }
 
-    public void SetReplyMarkup(IReplyMarkup markup)
+    public TelegramMessageBuilder SetReplyMarkup(IReplyMarkup markup)
     {
         _markup = markup;
+        return this;
     }
     
     public TelegramMessageBuilder SetReplyToMessageId(int replyToMessageId)
     {
+        _replyToMessageId = replyToMessageId;
         return this;
     }
     
-    public async Task<Message> SendTextMessage()
+    public async Task<Message> SendTextMessage(CancellationToken cancellationToken)
     {
-        _client.SendTextMessageAsync(
+        return await _client.SendTextMessageAsync(
             chatId: _chatId,
             text: _text,
             parseMode: ParseMode.MarkdownV2,
-            disableNotification: true,
             replyToMessageId: _replyToMessageId,
-            replyMarkup: new InlineKeyboardMarkup(
-                InlineKeyboardButton.WithUrl(
-                    text: "Check sendMessage method",
-                    url: "https://core.telegram.org/bots/api#sendmessage")),
+            replyMarkup: _markup,
             cancellationToken: cancellationToken);
     }
 }
