@@ -1,23 +1,18 @@
-﻿using DiSi.Bot.TaskManager.Telegram;
+﻿using System.Text;
+using DiSi.Bot.TaskManager.Telegram;
 using DiSi.Bot.TaskManager.UI.Interfaces;
 using Telegram.Bot.Types.Enums;
 
 namespace DiSi.Bot.TaskManager.UI;
-
-public class StartMessage : ICustomMessage
+internal class WelcomeMessage(string username) : ICustomMessage
 {
-    public const string Title = "Hello, this is TaskManager bot.";
-    public const string Desctiption = "I'm here to help you and you team deal with tasks.";
-    public const string Ending = "Hope, you enjoy it!";
-    
+    private string _username = username;
     public TelegramMessageBuilder GetMessage()
     {
         var text = MarkDownTextBuilder.Create()
-            .AddBold(Title).Line(2)
-            .AddText(Desctiption).Line(2)
-            .AddItalic(Ending)
+            .AddBold($"Welcome back, {_username}").Line(2)
             .GetText();
-        
+
         return TelegramMessageBuilder.Create()
             .UseParseMode(ParseMode.Markdown)
             .AddText(text)
