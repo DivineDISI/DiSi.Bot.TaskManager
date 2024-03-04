@@ -44,4 +44,4 @@ botclient.HandleMessage += async (client, message, token) =>
     }
 };
 
-while(true){}
+Console.ReadKey();
